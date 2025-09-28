@@ -122,8 +122,8 @@
     <div class="flex gap-3 mb-3">
       <button id="predict-btn" class="btn" onclick="predictTest()" disabled>🔮 Predict Test</button>
       <button id="download-btn" class="btn" onclick="exportPredictions()" disabled>💾 Download Model .json + .bin</button>
-      <button onclick="exportPredictionsCSV()">💾 Download Predictions .csv</button>
-      <button onclick="exportPredictionsWithModel()">💾 Download Predictions + Model</button>
+      <button id="download-btn" class="btn" onclick="exportPredictionsCSV()" disabled>💾 Download Predictions .csv</button>
+      <button id="download-btn" class="btn" onclick="exportPredictionsWithModel()" disabled>💾 Download Predictions + Model</button>
     </div>
     <div id="prediction-preview" class="overflow-x-auto"></div>
   </section>
