@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Titanic Survival Classifier - TensorFlow.js</title>
+
+  <!-- TensorFlow.js and tfjs-vis CDNs (as requested) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@latest"></script>
+
+  <!-- Link to app.js (logic) -->
+  <script src="app.js" defer></script>
+
+  <style>
+    /* Basic responsive styling */
+    :root {
+      --primary: #1a73e8;
+      --muted: #666;
+      --card-bg: #fff;
+      --border: #e6e6e6;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 18px;
+      color: #222;
+      background: #f6f8fb;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 20px;
+      color: var(--primary);
+      margin: 0;
+    }
+
+    section.card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #cfcfcf;
+      cursor: not-allowed;
+    }
+
+    input[type="file"] {
+      padding: 6px 0;
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f5f7fb;
+    }
+
+    .flex {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .metric-card {
+      border: 1px solid var(--border);
+      padding: 10px;
+      border-radius: 6px;
+      min-width: 200px;
+      background: #fff;
+    }
+
+    .slider {
+      width: 220px;
+    }
+
+    @media (max-width: 720px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .slider { width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>Titanic Survival Classifier (browser-only) — TensorFlow.js</h1>
+      <div class="small">Ready for GitHub Pages. No server required.</div>
+    </header>
+
+    <!-- 1. Data Load -->
+    <section id="data-load" class="card">
+      <h2>1 — Data Load</h2>
+      <p class="small">Upload <strong>train.csv</strong> and <strong>test.csv</strong> from the Kaggle Titanic dataset. CSV parser handles quoted fields (commas in names).</p>
+
+      <div class="flex">
+        <label>
+          Training CSV (train.csv):
+          <input id="train-file" type="file" accept=".csv" />
+        </label>
+
+        <label>
+          Test CSV (test.csv):
+          <input id="test-file" type="file" accept=".csv" />
+        </label>
+
+        <div class="controls">
+          <button id="load-data-btn">Load Data</button>
+          <button id="inspect-btn" disabled>Inspect Data</button>
+        </div>
+      </div>
+
+      <div id="data-status" class="small" style="margin-top:8px;"></div>
+    </section>
+
+    <!-- 2. Data Inspection -->
+    <section id="inspect" class="card">
+      <h2>2 — Data Inspection</h2>
+      <div id="data-preview" class="small"></div>
+      <div id="data-stats" class="small" style="margin-top:8px;"></div>
+      <div id="charts" class="small" style="margin-top:8px;"></div>
+      <div style="margin-top:8px">
+        <label><input type="checkbox" id="add-family-features" checked /> Add Family features (FamilySize, IsAlone)</label>
+      </div>
+    </section>
+
+    <!-- 3. Preprocessing -->
+    <section id="preprocessing" class="card">
+      <h2>3 — Preprocessing</h2>
+      <div class="controls" style="margin-bottom:8px;">
+        <button id="preprocess-btn" disabled>Preprocess</button>
+      </div>
+      <div id="preprocessing-output" class="small"></div>
+    </section>
+
+    <!-- 4. Model -->
+    <section id="model" class="card">
+      <h2>4 — Model</h2>
+      <div class="controls">
+        <button id="create-model-btn" disabled>Create Model</button>
+        <button id="train-btn" disabled>Train Model</button>
+      </div>
+      <div id="model-summary" class="small" style="margin-top:8px"></div>
+      <div id="training-status" class="small" style="margin-top:8px"></div>
+      <div id="training-vis" style="margin-top:12px"></div>
+    </section>
+
+    <!-- 5. Metrics / Evaluation -->
+    <section id="metrics" class="card">
+      <h2>5 — Metrics & Evaluation</h2>
+
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <label>
+          Threshold:
+          <input id="threshold-slider" class="slider" type="range" min="0" max="1" step="0.01" value="0.50" disabled />
+        </label>
+        <div class="small">Current: <span id="threshold-value">0.50</span></div>
+        <div class="small" style="margin-left:auto">ROC plot appears in tfjs-vis visor under "Evaluation".</div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;">
+        <div id="confusion-card" class="metric-card">
+          <h4>Confusion Matrix</h4>
+          <div id="confusion-matrix" class="small">No evaluation yet.</div>
+        </div>
+
+        <div id="performance-card" class="metric-card">
+          <h4>Performance Metrics</h4>
+          <div id="performance-metrics" class="small">No evaluation yet.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Prediction -->
+    <section id="prediction" class="card">
+      <h2>6 — Predict</h2>
+      <div class="controls">
+        <button id="predict-btn" disabled>Predict on Test Data</button>
+        <button id="export-btn" disabled>Export Results & Save Model</button>
+      </div>
+      <div id="prediction-output" class="small" style="margin-top:8px"></div>
+      <div id="export-status" class="small" style="margin-top:6px"></div>
+    </section>
+
+    <!-- Deployment note -->
+    <section id="deployment" class="card">
+      <h2>Deployment Notes</h2>
+      <ol class="small">
+        <li>Create a public GitHub repository.</li>
+        <li>Add <code>index.html</code> and <code>app.js</code>, commit and push.</li>
+        <li>Enable GitHub Pages (main branch, root folder).</li>
+        <li>Visit <code>https://&lt;username&gt;.github.io/&lt;repo-name&gt;</code> to open your app.</li>
+      </ol>
+    </section>
+  </div>
+</body>
+</html>
