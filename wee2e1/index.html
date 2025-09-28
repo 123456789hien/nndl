@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Titanic Classifier — Browser E2E (tfjs)</title>
+
+  <!-- Tailwind for UI (user preferred look) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- PapaParse for robust CSV-in-browser parsing (handles commas in quotes) -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- TensorFlow.js + tfjs-vis (as requested) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@latest"></script>
+
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: linear-gradient(90deg,#fff0f6,#ffe6f0); color:#4a044e; }
+    .card { background: #fff; border-radius: 1rem; box-shadow: 0 6px 20px rgba(190,24,93,0.12); padding:1.25rem; margin-bottom:1.25rem; }
+    .btn { background:#ec4899; color:#fff; padding:.5rem .9rem; border-radius:.75rem; }
+    .btn:disabled { background:#f3a6c9; opacity:.6; cursor:not-allowed; }
+    table { width:100%; border-collapse:collapse; }
+    th,td { border:1px solid #f9a8d4; padding:.5rem; text-align:center; }
+    th { background:#fce7f3; }
+    .small-muted { font-size:.9rem; color:#8b5f71; }
+  </style>
+</head>
+<body class="p-6">
+
+  <header class="text-center mb-8">
+    <h1 class="text-3xl font-bold">🚢 Titanic Survival Classifier</h1>
+    <p class="small-muted mt-2">TensorFlow.js • Client-side EDA, training, and export • Deploy to GitHub Pages</p>
+  </header>
+
+  <!-- 1. Data Load -->
+  <section class="card">
+    <h2 class="text-xl font-semibold mb-3">1️⃣ Data Load</h2>
+    <div class="flex flex-col gap-2">
+      <label class="small-muted">Training CSV (train.csv) <input id="train-file" type="file" accept=".csv" class="ml-2" /></label>
+      <label class="small-muted">Test CSV (test.csv) <input id="test-file" type="file" accept=".csv" class="ml-2" /></label>
+
+      <div class="mt-3 flex gap-3">
+        <button id="load-btn" class="btn" onclick="loadData()">📂 Load Data</button>
+        <button id="run-eda-btn" class="btn" onclick="runEDA()" disabled>🔎 Run EDA</button>
+        <button id="export-merged-btn" class="btn" onclick="exportMerged()" disabled>⬇️ Download merged CSV</button>
+      </div>
+    </div>
+
+    <div id="load-status" class="mt-3 small-muted"></div>
+  </section>
+
+  <!-- 2. Merge & Overview -->
+  <section class="card">
+    <h2 class="text-xl font-semibold mb-3">2️⃣ Merge & Overview</h2>
+    <div id="overview" class="mb-3 small-muted">No data loaded.</div>
+    <div id="head-preview" class="overflow-x-auto"></div>
+  </section>
+
+  <!-- 3. Missing values -->
+  <section class="card">
+    <h2 class="text-xl font-semibold mb-3">3️⃣ Missing Values</h2>
+    <div id="missing-chart" class="mb-3"></div>
+    <div id="missing-table" class="overflow-x-auto small-muted"></div>
+  </section>
+
+  <!-- 4. Stats Summary & Visualizations -->
+  <section class="card">
+    <h2 class="text-xl font-semibold mb-3">4️⃣ Stats & Visualizations</h2>
+    <div id="stats-summary" class="small-muted mb-3"></div>
+    <div id="vis-row" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div id="chart-sex" class="p-2"></div>
+      <div id="chart-pclass" class="p-2"></div>
+      <div id="chart-embarked" class="p-2"></div>
+      <div id="chart-age-fare" class="p-2"></div>
+    </div>
+  </section>
+
+  <!-- 5. Preprocessing -->
+  <section class="card">
+    <h2 class="text-xl font-semibold mb-3">5️⃣ Preprocessing</h2>
+    <div class="flex items-center gap-3 mb-3">
+      <label class="inline-flex items-center gap-2"><input id="family-toggle" type="checkbox" /> Add Family features</label>
+      <button id="preprocess-btn" class="btn" onclick="preprocess()" disabled>⚙️ Run Preprocess</button>
+    </div>
+    <div id="preprocess-info" class="small-muted"></div>
+  </section>
+
+  <!-- 6. Model -->
+  <section class="card">
+    <h2 class="text-xl font-semibold mb-3">6️⃣ Model</h2>
+    <div class="flex gap-3 mb-3">
+      <button id="create-model-btn" class="btn" onclick="createModel()" disabled>🧩 Create Model</button>
+      <button id="train-btn" class="btn" onclick="trainModel()" disabled>🚀 Train (50 epochs)</button>
+      <button id="stop-btn" class="btn bg-pink-300" onclick="stopTraining()" disabled>⛔ Stop</button>
+    </div>
+    <pre id="model-summary" class="text-xs bg-pink-50 p-2 rounded"></pre>
+    <div id="trainingVis" class="mt-4"></div>
+  </section>
+
+  <!-- 7. Metrics (ROC/AUC + slider) -->
+  <section class="card">
+    <h2 class="text-xl font-semibold mb-3">7️⃣ Metrics & Evaluation</h2>
+    <div class="flex gap-3 mb-3">
+      <button id="eval-btn" class="btn" onclick="evaluateModel()" disabled>📊 Evaluate</button>
+      <button id="conf-btn" class="btn" onclick="updateThreshold()" disabled>🔁 Update Threshold</button>
+    </div>
+
+    <div class="mb-3">
+      <label class="small-muted">Threshold: <span id="threshold-value">0.50</span></label>
+      <input id="threshold-slider" type="range" min="0" max="1" step="0.01" value="0.5" class="w-full" oninput="updateThreshold()" disabled />
+    </div>
+
+    <div id="roc-container" class="mb-3"></div>
+    <div id="confusion-matrix" class="mb-3"></div>
+    <div id="perf-metrics" class="small-muted"></div>
+  </section>
+
+  <!-- 8. Prediction & Export -->
+  <section class="card">
+    <h2 class="text-xl font-semibold mb-3">8️⃣ Prediction & Export</h2>
+    <div class="flex gap-3 mb-3">
+      <button id="predict-btn" class="btn" onclick="predictTest()" disabled>🔮 Predict Test</button>
+      <button id="download-btn" class="btn" onclick="exportPredictionsWithModel()" disabled>💾 Download Predictions + Model</button>
+    </div>
+    <div id="prediction-preview" class="overflow-x-auto"></div>
+  </section>
+
+  <!-- Deployment notes -->
+  <section class="card">
+    <h2 class="text-lg font-semibold">🚀 Deployment Notes</h2>
+    <p class="small-muted">Create a public GitHub repository, commit <code>index.html</code> & <code>app.js</code>, enable GitHub Pages (main/root), then test the URL.</p>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
