@@ -1,0 +1,100 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MNIST CNN + Denoising Autoencoder</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@latest"></script>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f8c8dc; /* medium pink background */
+    color: #333;
+  }
+  header {
+    background: #e75480; /* deep pink header */
+    color: white;
+    padding: 12px;
+    font-size: 20px;
+    text-align: center;
+  }
+  main {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+  }
+  .left-panel, .right-panel {
+    flex: 1;
+    background: rgba(255,255,255,0.85);
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  h2 {margin-top:0;}
+  button, input[type="file"] {
+    display: block;
+    margin: 6px 0;
+    padding: 8px;
+    font-size: 14px;
+    background: #e75480; 
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {background: #c74368;}
+  #preview-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .preview-item {text-align: center;}
+  canvas {
+    border:1px solid #ccc;
+    background: white;
+  }
+  .correct {color: green;}
+  .wrong {color: red;}
+  #metrics, #training-logs, #model-info, #data-status {font-size:14px;}
+</style>
+</head>
+<body>
+<header>MNIST CNN Classifier & Denoising Autoencoder Demo</header>
+<main>
+  <div class="left-panel">
+    <h2>Controls</h2>
+    <label>Upload Train CSV<input type="file" id="train-csv" accept=".csv"></label>
+    <label>Upload Test CSV<input type="file" id="test-csv" accept=".csv"></label>
+    <button id="load-data">Load Data</button>
+    <button id="train-cnn">Train CNN</button>
+    <button id="train-denoiser">Train Denoiser</button>
+    <button id="evaluate">Evaluate</button>
+    <button id="test-five">Test 5 Random</button>
+    <button id="save-model">Save Model (Download)</button>
+    <label>Upload Model JSON<input type="file" id="upload-json" accept=".json"></label>
+    <label>Upload Weights BIN<input type="file" id="upload-weights" accept=".bin"></label>
+    <button id="load-model">Load Model (From Files)</button>
+    <button id="reset">Reset</button>
+    <button id="toggle-visor">Toggle Visor</button>
+  </div>
+
+  <div class="right-panel">
+    <h2>Status & Outputs</h2>
+    <div id="data-status"></div>
+    <div id="training-logs"></div>
+    <div id="metrics"></div>
+    <h3>Random 5 Preview</h3>
+    <div id="preview-row"></div>
+    <h3>Model Info</h3>
+    <pre id="model-info"></pre>
+  </div>
+</main>
+
+<script src="data-loader.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>
