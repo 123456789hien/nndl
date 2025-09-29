@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MNIST Denoiser — TFJS (browser-only)</title>
+
+  <!-- TFJS and TFJS-VIS (required by the app) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@latest"></script>
+
+  <!-- UI styling — medium pink background, dark pink buttons, clean cards -->
+  <style>
+    :root{
+      --bg: #ff9fb3;       /* medium pink background */
+      --card-bg: rgba(255,255,255,0.92);
+      --muted: #4b3b3b;
+      --accent: #d81b60;   /* dark pink buttons */
+      --accent-2: #c2185b;
+      --accent-contrast: #fff;
+      --radius: 14px;
+      --shadow: 0 8px 24px rgba(0,0,0,0.12);
+      --gap: 16px;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, var(--bg) 0%, #ffc6d0 100%);
+      color: #2b2b2b;
+    }
+
+    .container{
+      max-width:1200px;
+      margin:28px auto;
+      padding:20px;
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap: var(--gap);
+    }
+
+    header{
+      grid-column: 1 / -1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:6px;
+    }
+
+    header h1{
+      margin:0;
+      font-size:20px;
+      color: #3b0b2f;
+      letter-spacing:0.2px;
+    }
+
+    .card{
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding:16px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    /* Left column controls */
+    .controls { display:flex; flex-direction:column; gap:12px; }
+    .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    label.small { font-size:13px; color:var(--muted); }
+    input[type="file"] { font-size:13px; }
+
+    button{
+      border: none;
+      background: var(--accent);
+      color: var(--accent-contrast);
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      box-shadow: 0 6px 14px rgba(216,27,96,0.18);
+      transition: transform .08s ease, box-shadow .08s ease;
+    }
+    button.secondary {
+      background: var(--accent-2);
+      box-shadow: 0 6px 14px rgba(194,24,91,0.14);
+    }
+    button.ghost {
+      background: transparent;
+      color: #3b0b2f;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: none;
+      font-weight:600;
+    }
+    button:active { transform: translateY(1px) }
+    button:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .muted { color:var(--muted); font-size:13px; }
+
+    /* Right column visual area */
+    .vis-area { display:flex; flex-direction:column; gap:12px; }
+    #vis-root { min-height:240px; border-radius:10px; padding:10px; background:rgba(255,255,255,0.85); }
+
+    /* Preview strip: horizontal scroll with items */
+    #preview-strip { display:flex; gap:14px; overflow-x:auto; padding:12px 6px; align-items:flex-start; }
+    .preview-item { display:flex; gap:8px; flex-direction:column; align-items:center; min-width: 150px; }
+    .preview-canvas { border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:#111; image-rendering: pixelated; }
+
+    pre#model-info { white-space:pre-wrap; font-size:12px; color:#333; max-height:180px; overflow:auto; padding:8px; background:rgba(0,0,0,0.02); border-radius:8px; }
+
+    /* compact responsive */
+    @media (max-width: 980px){
+      .container { grid-template-columns: 1fr; padding:12px; }
+      header{ flex-direction:column; align-items:flex-start; gap:8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>MNIST — CNN Autoencoder Denoiser (browser-only)</h1>
+        <div class="muted" style="margin-top:6px">Train & run entirely client-side with TensorFlow.js. Upload CSVs, train, preview denoising, save/load model files.</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="toggle-visor" class="ghost">Toggle Visor</button>
+        <button id="reset-btn" class="ghost">Reset</button>
+      </div>
+    </header>
+
+    <!-- LEFT: Controls -->
+    <div class="card">
+      <h3 style="margin:0 0 8px 0; color:#6a1b4d">Controls & Data</h3>
+      <div class="controls">
+        <div>
+          <label class="small">Upload Train CSV (mnist_train.csv)</label><br>
+          <input type="file" id="train-csv" accept=".csv">
+        </div>
+
+        <div>
+          <label class="small">Upload Test CSV (mnist_test.csv)</label><br>
+          <input type="file" id="test-csv" accept=".csv">
+        </div>
+
+        <div class="row">
+          <button id="load-data-btn">Load Data</button>
+          <button id="train-btn" disabled>Train Denoiser</button>
+          <button id="evaluate-btn" disabled class="secondary">Evaluate</button>
+        </div>
+
+        <div class="row">
+          <button id="test-five-btn" disabled class="secondary">Test 5 Random</button>
+          <button id="save-btn" disabled>Save Model (Download)</button>
+        </div>
+
+        <div>
+          <label class="small">Load Model (From Files)</label>
+          <div class="row" style="margin-top:6px">
+            <input type="file" id="upload-json" accept=".json">
+            <input type="file" id="upload-weights" accept=".bin">
+            <button id="load-model-btn" class="ghost">Load Model</button>
+          </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid rgba(0,0,0,0.06)">
+
+        <div style="display:flex;gap:8px;align-items:center;">
+          <label class="small">Noise level (0-1):</label>
+          <input type="range" id="noise-level" min="0" max="1" step="0.01" value="0.25" style="flex:1">
+          <span id="noise-val" class="muted" style="width:40px;text-align:right">0.25</span>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;">
+          <label class="small">Epochs</label>
+          <input type="number" id="epochs" min="1" max="50" value="8" style="width:86px;">
+          <label class="small">Batch</label>
+          <input type="number" id="batch-size" min="8" max="1024" value="128" style="width:86px;">
+        </div>
+
+        <div>
+          <h4 style="margin:10px 0 6px 0; color:#6a1b4d">Data Status</h4>
+          <div id="data-status" class="muted">No data loaded.</div>
+        </div>
+
+        <div>
+          <h4 style="margin:10px 0 6px 0; color:#6a1b4d">Model Info</h4>
+          <pre id="model-info">No model.</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Visualizations -->
+    <div class="card vis-area">
+      <div>
+        <h3 style="margin:0 0 8px 0; color:#6a1b4d">Training Logs & Metrics</h3>
+        <div id="logs" class="muted" style="font-size:13px; max-height:100px; overflow:auto; padding:8px; background:rgba(0,0,0,0.02); border-radius:8px"></div>
+      </div>
+
+      <div id="vis-root"></div>
+
+      <div>
+        <h3 style="margin:8px 0 8px 0; color:#6a1b4d">Random 5 Preview (Original → Noisy → Denoised)</h3>
+        <div id="preview-strip"></div>
+      </div>
+
+      <div>
+        <h3 style="margin:8px 0 6px 0; color:#6a1b4d">Evaluation Summary</h3>
+        <div id="eval-summary" class="muted">No evaluation yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load data-loader and app script (defer so DOM is ready) -->
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>
