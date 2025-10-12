@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNIST CNN Trainer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <script src="data-loader.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+    <div id="container">
+        <h1>MNIST CNN Trainer</h1>
+
+        <div id="controls">
+            <button id="load-data">Load Data</button>
+            <button id="train-model">Train Model</button>
+        </div>
+
+        <div id="charts">
+            <canvas id="lossChart"></canvas>
+            <canvas id="accuracyChart"></canvas>
+            <canvas id="confusionChart"></canvas>
+            <canvas id="perClassChart"></canvas>
+        </div>
+
+        <div id="predictions">
+            <h2>Make Predictions</h2>
+            <canvas id="inputCanvas" width="28" height="28"></canvas>
+            <button id="predict">Predict</button>
+            <p id="predictionResult"></p>
+        </div>
+    </div>
+</body>
+</html>
