@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NextStay: Hotel Cancellation Prediction</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.9.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.7.0/dist/tfjs-vis.umd.min.js"></script>
+</head>
+<body>
+<h1>NextStay: Hotel Cancellation Prediction</h1>
+
+<!-- 1. Data Load -->
+<div class="section">
+<h2>1. Load Data</h2>
+<input type="file" id="train-file" accept=".csv">
+<input type="file" id="test-file" accept=".csv">
+<button id="load-data-btn" onclick="loadData()">Load Data</button>
+<p id="load-status"></p>
+</div>
+
+<!-- 2. Run EDA -->
+<div class="section">
+<h2>2. EDA & Visualizations</h2>
+<button id="run-eda-btn" onclick="runEDA()" disabled>Run EDA</button>
+<h3>Data Preview</h3>
+<div id="head-preview"></div>
+<h3>Missing Values</h3>
+<div id="missing-chart"></div>
+<table id="missing-table"></table>
+<h3>Stats & Visualizations</h3>
+<pre id="stats-summary"></pre>
+<div id="charts-container"></div>
+<div id="heatmap-container"></div>
+</div>
+
+<!-- 3. Predict Cancellation -->
+<div class="section">
+<h2>3. Predict Next Month Cancellation Rate</h2>
+<label>Hotel Type:
+<select id="hotel-dropdown"></select>
+</label>
+<label>Year: <input type="number" id="input-year" value="2022"></label>
+<label>Month: <input type="number" id="input-month" value="12"></label>
+<button id="predict-btn" onclick="predictNextMonth()">Predict</button>
+<div id="prediction-result"></div>
+<canvas id="prediction-chart" width="800" height="400"></canvas>
+<div id="insight-box"></div>
+</div>
+
+<script src="data-loader.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
