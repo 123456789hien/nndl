@@ -1,0 +1,51 @@
+/* Keep original UI/UX styling intact */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f8f8;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.upload-section, .controls, .overview-section, .charts-section {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+label {
+  margin-right: 10px;
+}
+
+input[type="file"], select, button {
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+canvas {
+  width: 100% !important;
+  max-height: 400px;
+  margin-bottom: 20px;
+}
