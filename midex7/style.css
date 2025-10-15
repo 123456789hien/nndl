@@ -60,4 +60,15 @@ button{
 button[disabled]{opacity:.6;cursor:not-allowed}
 
 .table-scroll table{width:100%;border-collapse:collapse}
-.table-sc
+.table-scroll th{background:var(--primary);color:white;padding:8px;position:sticky;top:0}
+.table-scroll td, .table-scroll th{border-bottom:1px solid #eef6fb;padding:6px;text-align:center;font-size:13px}
+
+.footer{margin-top:18px;color:var(--muted);text-align:center;padding:12px}
+
+#insight-box{
+  margin-top:12px;padding:12px;border-radius:10px;background:#fff;color:var(--primary);
+  font-weight:700;border:2px solid rgba(1,73,124,0.08);
+}
+#insight-box.high{background:#ffebee;color:#b71c1c;border-color:#f44336}
+#insight-box.medium{background:#fff8e1;color:#ff6f00;border-color:#ffb300}
+#insight-box.low{background:#e8f5e9;color:#1b5e20;border-color:#4caf50}
