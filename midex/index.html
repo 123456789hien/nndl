@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NextStay: Hotel Demand Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="data-loader.js"></script>
+  <script src="app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>NextStay: Hotel Demand Dashboard</h1>
+    <p>Predict Cancellation Rate & Gain Business Insights</p>
+  </header>
+
+  <section id="data-load">
+    <h2>1️⃣ Upload Data</h2>
+    <input type="file" id="train-file" accept=".csv">
+    <input type="file" id="test-file" accept=".csv">
+    <button onclick="loadData()">Load Data</button>
+    <div id="load-status"></div>
+  </section>
+
+  <section id="eda">
+    <h2>2️⃣ EDA & Overview</h2>
+    <label>Smoothing Level: <span id="smoothing-value">1</span></label>
+    <input type="range" min="0" max="5" step="1" value="1" id="smoothing-slider" oninput="updateSmoothing(this.value)">
+    <button id="run-eda-btn" onclick="runEDA()" disabled>Run EDA</button>
+
+    <h3>Merge & Overview</h3>
+    <div id="overview"></div>
+
+    <h3>Missing Values</h3>
+    <div id="missing-chart"></div>
+    <div id="missing-table"></div>
+
+    <h3>Stats & Visualizations</h3>
+    <div id="stats-summary"></div>
+    <div id="charts" class="chart-container"></div>
+  </section>
+
+  <section id="model">
+    <h2>3️⃣ LSTM Model & Prediction</h2>
+    <button onclick="trainLSTM()">Train LSTM</button>
+    <button onclick="loadModelFromStorage()">Load Saved Model</button>
+    <div class="form-row">
+      <label>Hotel:</label>
+      <select id="hotel-dropdown" onchange="updateChartsForHotel(this.value)"></select>
+    </div>
+    <div class="form-row">
+      <label>Year:</label><input type="number" id="input-year" min="2018" max="2022">
+      <label>Month:</label><input type="number" id="input-month" min="1" max="12">
+    </div>
+    <button onclick="predictNextMonth()">Predict Cancellation Rate</button>
+    <div id="prediction-result" class="prediction-box"></div>
+    <div id="insight-box" class="insight-box"></div>
+    <canvas id="prediction-chart"></canvas>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 NextStay | AI Hotel Demand Predictor</p>
+  </footer>
+</body>
+</html>
