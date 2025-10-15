@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hotel Booking Demand Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.1.0/dist/chartjs-chart-matrix.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.14.0/dist/tf.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <h1>Hotel Booking Demand Dashboard</h1>
+
+  <!-- Data Load -->
+  <section class="section" id="data-load">
+    <h2>1. Data Load</h2>
+    <input type="file" id="train-csv" accept=".csv">
+    <input type="file" id="test-csv" accept=".csv">
+    <button id="load-data-btn">Load Data</button>
+    <div id="notes">Status: Waiting for CSV upload...</div>
+  </section>
+
+  <!-- Merge & Overview / Missing / Stats -->
+  <section class="section" id="eda-tables">
+    <h2>2. Merge & Overview / Missing / Stats</h2>
+    <div id="merge-overview"></div>
+    <div id="missing-values"></div>
+    <div id="stats-table"></div>
+  </section>
+
+  <!-- EDA Visuals -->
+  <section class="section" id="eda-visuals">
+    <h2>3. EDA Visuals</h2>
+    <div class="chart-container">
+      <canvas id="line-cancellation"></canvas>
+      <label>Smoothing: <input type="range" id="smoothing-slider" min="1" max="12" value="1"></label>
+    </div>
+    <div class="chart-container">
+      <canvas id="histogram-price"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="heatmap-corr"></canvas>
+    </div>
+  </section>
+
+  <!-- Model Training -->
+  <section class="section" id="model-train">
+    <h2>4. Train LSTM Model</h2>
+    <button id="train-model-btn">Train Model (3×50 neurons, 50 epochs)</button>
+    <button id="download-model-btn" disabled>Download Model (.json + .bin)</button>
+    <div id="train-notes">Status: Not trained yet</div>
+  </section>
+
+  <!-- Prediction -->
+  <section class="section" id="prediction">
+    <h2>5. Prediction</h2>
+    <input type="file" id="upload-model-json" accept=".json">
+    <input type="file" id="upload-model-bin" accept=".bin">
+    <select id="hotel-dropdown"></select>
+    <input type="number" id="predict-year" placeholder="Year">
+    <input type="number" id="predict-month" placeholder="Month (1-12)">
+    <button id="predict-btn">Predict</button>
+    <div id="insight-box"></div>
+    <div class="chart-container">
+      <canvas id="line-prediction"></canvas>
+    </div>
+  </section>
+</div>
+<script src="data-loader.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
