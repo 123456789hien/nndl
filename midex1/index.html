@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextStay: Hotel Booking Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.8.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="data-loader.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>NextStay: Hotel Booking Dashboard</h1>
+  </header>
+
+  <main>
+    <section class="data-load">
+      <h2>1️⃣ Data Load & EDA</h2>
+      <div class="upload-row">
+        <label>Training CSV: <input type="file" id="train-file"></label>
+        <label>Testing CSV: <input type="file" id="test-file"></label>
+      </div>
+      <button id="load-btn" onclick="loadData()">Load CSVs</button>
+      <button id="run-eda-btn" onclick="runEDA()" disabled>Run EDA</button>
+
+      <div id="overview" class="overview"></div>
+      <div id="missing-table"></div>
+      <div id="stats-summary"></div>
+      <canvas id="correlation-heatmap" height="300"></canvas>
+      <canvas id="cancellation-trend" height="200"></canvas>
+      <canvas id="price-histogram" height="200"></canvas>
+    </section>
+
+    <section class="model">
+      <h2>2️⃣ Train LSTM & Predict</h2>
+      <button onclick="trainModel()">Train LSTM</button>
+      <button onclick="loadModelFromStorage()">Load Saved Model</button>
+
+      <div class="predict-form">
+        <label>Hotel:
+          <select id="hotel-dropdown"></select>
+        </label>
+        <label>Year: <input type="number" id="input-year" value="2022"></label>
+        <label>Month: <input type="number" id="input-month" value="12"></label>
+        <button onclick="predictNextMonth()">Predict</button>
+      </div>
+
+      <div id="prediction-result" class="prediction-result"></div>
+      <div id="insight-box" class="insight-box"></div>
+      <canvas id="prediction-chart" height="300"></canvas>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 NextStay Hotel AI Dashboard</p>
+  </footer>
+</body>
+</html>
