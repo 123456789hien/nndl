@@ -1,0 +1,63 @@
+:root{
+  --primary:#01497c;
+  --accent:#0288d1;
+  --bg:#f4fbff;
+  --card:#e8f6ff;
+  --muted:#6b7b8c;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter, "Segoe UI", Arial, sans-serif;
+  background:var(--bg);
+  color:#05243a;
+  -webkit-font-smoothing:antialiased;
+}
+
+header{
+  background:linear-gradient(90deg,var(--primary),#026aa7);
+  color:white;
+  padding:24px 12px;
+  text-align:center;
+}
+header h1{margin:0;font-size:20px}
+header .subtitle{margin-top:6px;opacity:.9;font-size:13px}
+
+.container{max-width:1200px;margin:18px auto;padding:0 12px}
+
+.card{
+  background:var(--card);
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:18px;
+  box-shadow:0 6px 18px rgba(2,40,60,0.06);
+}
+
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.col{flex:1;min-width:220px}
+.actions{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+
+.label{font-weight:600;color:var(--primary)}
+
+.note{margin-top:6px;color:var(--muted);font-size:13px}
+.small-note{font-size:12px;color:var(--muted)}
+
+.panel{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+.table-scroll{flex:1;min-width:260px;max-height:240px;overflow:auto;background:white;padding:8px;border-radius:8px;border:1px solid rgba(1,73,124,0.06)}
+
+.charts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.chart-card{background:white;padding:12px;border-radius:8px;box-shadow:0 4px 12px rgba(2,40,60,0.04)}
+.chart-card h3{margin:0 0 6px 0;font-size:14px;color:var(--primary)}
+
+input[type="file"]{padding:6px;background:white;border-radius:6px;border:1px solid rgba(1,73,124,0.08)}
+input[type="number"], select, input[type="text"]{padding:8px;border-radius:6px;border:1px solid rgba(1,73,124,0.12);width:100%}
+input[type="range"]{width:160px}
+
+button{
+  padding:8px 12px;border-radius:8px;border:none;background:var(--primary);color:white;cursor:pointer;font-weight:600
+}
+button[disabled]{opacity:.6;cursor:not-allowed}
+
+.table-scroll table{width:100%;border-collapse:collapse}
+.table-sc
