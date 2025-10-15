@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NextStay Hotel Dashboard – Advanced</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<header>
+  <h1>NextStay Hotel Dashboard – Advanced</h1>
+</header>
+<main>
+
+<section class="upload-section">
+  <h2>1️⃣ Upload Data</h2>
+  <input type="file" id="train-file" accept=".csv">
+  <input type="file" id="test-file" accept=".csv">
+  <button id="load-btn" onclick="loadData()">Load CSVs</button>
+  <button id="run-eda-btn" onclick="runEDA()" disabled>Run EDA</button>
+</section>
+
+<section class="eda-section">
+  <h2>2️⃣ EDA Overview & Merge</h2>
+  <div id="overview-table"></div>
+  <h3>Missing Values</h3>
+  <div id="missing-table"></div>
+  <h3>Correlation Heatmap</h3>
+  <canvas id="correlation-heatmap"></canvas>
+  <h3>Distribution of Avg Room Price</h3>
+  <canvas id="avg-room-price-hist"></canvas>
+  <h3>Cancellation Rate over Time</h3>
+  <canvas id="cancellation-trend"></canvas>
+</section>
+
+<section class="model-section">
+  <h2>3️⃣ Train & Load LSTM Model</h2>
+  <button onclick="trainModel()">Train LSTM Model</button>
+  <input type="file" id="upload-model-json" accept=".json">
+  <input type="file" id="upload-model-weights" accept=".bin">
+  <button onclick="loadTFModel()">Load Model</button>
+</section>
+
+<section class="prediction-section">
+  <h2>4️⃣ Predict Cancellation Rate</h2>
+  <label for="hotel-select">Hotel:</label>
+  <select id="hotel-select"></select>
+  <label for="year-input">Year:</label>
+  <input type="number" id="year-input" value="2022">
+  <label for="month-input">Month:</label>
+  <input type="number" id="month-input" value="12" min="1" max="12">
+  <label for="smoothing-slider">Smoothing:</label>
+  <input type="range" id="smoothing-slider" min="0" max="5" value="1" step="0.1">
+  <span id="smoothing-value">1</span>
+  <button onclick="predictCancellation()">Predict</button>
+  <div id="prediction-output"></div>
+  <div id="insight-box"></div>
+  <canvas id="prediction-chart"></canvas>
+</section>
+
+</main>
+<script src="data-loader.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
