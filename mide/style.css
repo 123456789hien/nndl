@@ -1,0 +1,6 @@
+body { font-family: Arial, sans-serif; margin: 20px; }
+h1 { text-align:center; color:#2c3e50; }
+.section { margin-top:30px; padding:20px; border:1px solid #ddd; border-radius:10px; }
+button { margin:5px; padding:8px 15px; background-color:#3498db; color:white; border:none; border-radius:5px; cursor:pointer; }
+button:disabled { background-color:#ccc; cursor:not-allowed; }
+#insight-box { margin-top:10px; padding:10px; font-weight:bold; font-size:1.1em; border-radius:5px; }
