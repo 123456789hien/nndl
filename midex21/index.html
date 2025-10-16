@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Data Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Hotel Data Dashboard</h1>
+        
+        <!-- Dropdown filter -->
+        <div class="controls">
+            <label for="dataRange">Show:</label>
+            <select id="dataRange">
+                <option value="all">2017–2018</option>
+                <option value="2018">2018 only</option>
+            </select>
+        </div>
+
+        <!-- Charts -->
+        <div id="cancellationLine" class="chart"></div>
+        <div id="priceHist" class="chart"></div>
+        <div id="corrHeatmap" class="chart"></div>
+
+        <!-- Prediction -->
+        <div id="predictNextMonth" class="prediction"></div>
+    </div>
+    <script src="helper.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
