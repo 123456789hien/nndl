@@ -136,7 +136,7 @@ function renderTables(){
   meanArr.sort((a,b)=> (a.group < b.group ? -1 : a.group>b.group?1: a.month - b.month));
 
   let meanHtml = '<h3>Mean per Month per Room Type (aggregated overview)</h3>';
-  meanHtml += '<p>This table shows the average cancellation rate, room price, and lead time for each room type by month (≈168168 rows expected).</p>';
+  meanHtml += '<p>This table shows the average cancellation rate, room price, and lead time for each room type by month (≈168 rows expected).</p>';
   meanHtml += '<table><thead><tr><th>Room Type</th><th>Month</th><th>Cancellation Rate (Mean)</th><th>Avg Room Price (Mean)</th><th>Lead Time (Mean)</th></tr></thead><tbody>';
   meanArr.forEach(r=>{
     meanHtml += `<tr><td>${r.group}</td><td>${r.month}</td><td>${formatPct(r.cancellation_rate_mean)}</td><td>${formatNum(r.avg_room_price_mean)}</td><td>${formatNum(r.lead_time_avg_mean)}</td></tr>`;
