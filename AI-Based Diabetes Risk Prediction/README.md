@@ -1,8 +1,8 @@
 **AI-Based Diabetes Risk Prediction Web Application
 1. Project Overview**
 
-_This project is a browser-based dashboard for **early diabetes risk prediction** built for the course **Neural Network and Deep Learning**.
-_
+_This project is a browser-based dashboard for **early diabetes risk prediction** built for the course **Neural Network and Deep Learning**._
+
 The app allows users to:
 
 - Load a diabetes dataset (either from GitHub or from a local CSV file)
