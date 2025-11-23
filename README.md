@@ -1,1 +1,1 @@
-This is my space for Neural networks and deep learning homeworks and projects
+Repository for Neural Network & Deep Learning course in HSE : Code examples, assignments, personal project and capstone project templates.
