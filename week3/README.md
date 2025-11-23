@@ -145,4 +145,4 @@ Include clear English comments explaining logic, models, and interactions.
 
 Keep all UI/UX styling, layout, and functionality consistent with previous version.
 
-_**Link page:**_ 
+_**Link page:**_ https://123456789hien.github.io/nndl/week3/
