@@ -21,33 +21,7 @@ The app allows users to:
 
 Everything runs **client-side** using **TensorFlow.js** so no Python backend is required.
 
-**2. Team**
-
-**Do Thi Hien** – Project Manager, Data Lead and ML Application Architect
-
-- Coordinated project tasks
-
-- Designed data pipeline, EDA, model integration
-
-- Designed and refined the web UI, UX and interactive model logic
-
-**Bhuian Md Waliulla** – Model Lead and Backend Logic Design
-
-- Designed the neural network architecture
-
-- Helped define training strategy and evaluation metrics
-
-- Specified how model components should be exposed to the web app
-
-**Ahmed Md Zunayed** – Frontend and UI/UX Lead
-
-- Built the original HTML & CSS layout
-
-- Integrated dashboard workflow across steps
-
-- Tuned the visual style for a dark “plasma” premium look
-
-**3. Technology Stack**
+**2. Technology Stack**
 
 **Frontend**
 
@@ -71,7 +45,7 @@ Designed to run on **GitHub Pages** or any static file server
 
 Everything is contained in four files so the structure stays simple and easy to deploy.
 
-**4. Repository Structure**
+**3. Repository Structure**
 diabetes-risk-webapp/
 ├── index.html                  # Main dashboard layout and app structure
 ├── style.css                   # Dark plasma UI theme and responsive layout
@@ -81,7 +55,7 @@ diabetes-risk-webapp/
 
 If you move the CSV into a _data/_ folder you must update the path in _script.js_ inside the _autoLoadDataset()_ function.
 
-**5. Dataset**
+**4. Dataset**
 
 Source: Diabetes Prediction Dataset (Kaggle)
 _https://www.kaggle.com/datasets/iammustafatz/diabetes-prediction-dataset_
@@ -111,7 +85,7 @@ The dataset in this repo is a cleaned subset with at most **25 000 rows**
 
 _diabetes_raw_cleaned_25k.csv_
 
-**6. Core Features**
+**5. Core Features**
 
 The dashboard is organised into **three main steps** on the UI (left column for data and models, right column for prediction).
 
@@ -347,8 +321,8 @@ Two scenarios are computed:
 This gives an intuitive sense of how improving weight or glycemic control might affect predicted risk according to the learned model.
 The app clearly labels these as **hypothetical scenarios** not medical advice.
 
-**7. Implementation Details
-7.1 Preprocessing**
+**6. Implementation Details
+6.1 Preprocessing**
 
 Categorical features are numeric-encoded in JS
 
@@ -364,7 +338,7 @@ For user inputs, BMI and HbA1c can be left empty
 
 No explicit scaling or normalization is applied in this version since the focus is on demonstrating **model training with TensorFlow.js** and **interactive behaviour** rather than achieving optimal benchmark scores.
 
-**7.2 Models**
+**6.2 Models**
 
 _**Logistic Regression**_
 
@@ -382,7 +356,7 @@ _**Neural Network**_
 
 Both models are trained on the same training split and evaluated on the same test split.
 
-**8. Evaluation Metrics**
+**7. Evaluation Metrics**
 
 The dashboard reports:
 
@@ -400,7 +374,7 @@ The intention for the course is to:
 
   Show how feature weights (from logistic regression) relate to model explanations
 
-**9. Limitations**
+**8. Limitations**
 
 - Predictions are **not medical diagnoses**
 
@@ -414,7 +388,7 @@ The intention for the course is to:
 
   The UI tries to compensate by clearly informing the user when values are not provided
 
-**10. Possible Future Work**
+**9. Possible Future Work**
 
 - Add more robust preprocessing and feature scaling
 
@@ -428,7 +402,7 @@ The intention for the course is to:
 
 - Integrate more detailed educational content explaining each biomarker
 
-**11. Disclaimer**
+**10. Disclaimer**
 
 This application is developed for **educational purposes** within a Neural Network and Deep Learning course.
 
