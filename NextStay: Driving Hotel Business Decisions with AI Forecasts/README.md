@@ -1,3 +1,5 @@
+_**Link Page**:_  https://123456789hien.github.io/nndl/NextStay:%20Driving%20Hotel%20Business%20Decisions%20with%20AI%20Forecasts/
+
 _Build a fully client-side hotel cancellation forecasting tool using TensorFlow.js.
 The app must support four modules: Data Upload & EDA, LSTM Training, Model Download, and Prediction Dashboard.
 Everything runs in-browser; no backend or server storage._
@@ -71,5 +73,3 @@ Entire pipeline must run locally in browser: Upload → EDA → Train → Downlo
 No server calls, no external storage, no API usage.
 
 Output must feel like a professional prototype app for real hotel chains.
-
-_**Link Page**:_  https://123456789hien.github.io/nndl/NextStay:%20Driving%20Hotel%20Business%20Decisions%20with%20AI%20Forecasts/
