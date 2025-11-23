@@ -1,4 +1,5 @@
 # AI-Based Diabetes Risk Prediction Web Application
+_**Link page:**_ https://123456789hien.github.io/nndl/AI_diabetes_prediction_app/
 
 ## 1. Project Overview
 
@@ -120,6 +121,3 @@ Implemented as a single-layer neural network:
 ```text
 Input (8 features) → Dense(1, activation='sigmoid')
 
----
-
-Link page: https://123456789hien.github.io/nndl/AI_diabetes_prediction_app/
