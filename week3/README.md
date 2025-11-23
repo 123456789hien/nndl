@@ -97,17 +97,17 @@ Model:
 
   CNN
   
-  tf.sequential([
-    Conv2D(32, 3, activation='relu', padding='same', inputShape:[28,28,1]),
-    Conv2D(64, 3, activation='relu', padding='same'),
-    MaxPool2D(2),
-    Dropout(0.25),
-    Flatten(),
-    Dense(128, activation='relu'),
-    Dropout(0.5),
-    Dense(10, activation='softmax')
-  ])
-
+    tf.sequential([
+      Conv2D(32, 3, activation='relu', padding='same', inputShape:[28,28,1]),
+      Conv2D(64, 3, activation='relu', padding='same'),
+      MaxPool2D(2),
+      Dropout(0.25),
+      Flatten(),
+      Dense(128, activation='relu'),
+      Dropout(0.5),
+      Dense(10, activation='softmax')
+    ])
+  
 
   Compile: optimizer='adam', loss='categoricalCrossentropy', metrics=['accuracy']
   
@@ -121,11 +121,11 @@ Model:
   
   Input: noisy images → Output: original images
 
-Charts (tfjs-vis):
-
-  Live loss/val_loss and acc/val_acc during fit
+  Charts (tfjs-vis):
   
-  Confusion matrix + per-class accuracy on evaluation
+    Live loss/val_loss and acc/val_acc during fit
+    
+    Confusion matrix + per-class accuracy on evaluation
 
 Performance & safety:
 
