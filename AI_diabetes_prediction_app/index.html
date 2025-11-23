@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI-Based Diabetes Risk Prediction Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">📊</span>
+                <span>AI-Based Diabetes Risk Prediction Dashboard</span>
+            </div>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span>Live Dashboard</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="grid">
+            <!-- LEFT COLUMN -->
+            <div>
+                <!-- Step 1: Upload Dataset -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">📥</span>
+                        <div>
+                            <div class="card-title">Step 1: Upload Dataset</div>
+                            <div class="card-description">Upload your diabetes CSV dataset to train the AI models</div>
+                        </div>
+                    </div>
+                    <input type="file" id="csvFile" accept=".csv" style="margin-bottom: 1rem;">
+                    <button class="btn-primary" onclick="handleFileUpload()">Choose CSV File</button>
+                    <div id="uploadStatus" class="upload-status"></div>
+                </div>
+
+                <!-- Step 2: Train Models -->
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <span class="card-icon">🤖</span>
+                        <div>
+                            <div class="card-title">Step 2: Train AI Models</div>
+                            <div class="card-description">Train logistic regression and neural network models</div>
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="trainBtn" onclick="trainModels()" disabled>Train Models</button>
+                    <div id="trainingStatus" class="training-status"></div>
+                    <div id="trainingProgress" class="progress-text hidden"></div>
+
+                    <!-- Model Metrics -->
+                    <div id="metricsContainer" class="hidden" style="margin-top: 1.5rem;">
+                        <div class="stats-grid">
+                            <div class="stat">
+                                <div class="stat-label">Logistic Regression</div>
+                                <div class="stat-value" id="logAccuracy">0%</div>
+                                <div class="stat-caption">Accuracy</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Loss</div>
+                                <div class="stat-value" id="logLoss">0</div>
+                                <div class="stat-caption">Cross-entropy</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Neural Network</div>
+                                <div class="stat-value" id="nnAccuracy">0%</div>
+                                <div class="stat-caption">Accuracy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Visualization -->
+                <div class="card hidden" id="chartsContainer" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <span class="card-icon">📊</span>
+                        <div>
+                            <div class="card-title">Data Visualization</div>
+                            <div class="card-description">Class distribution and feature analysis</div>
+                        </div>
+                    </div>
+
+                    <!-- Class Distribution -->
+                    <div>
+                        <div class="chart-title">Class Distribution</div>
+                        <div class="chart-container">
+                            <canvas id="classChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- EDA: Age & BMI -->
+                    <div id="edaContainer" class="hidden" style="margin-top: 1.5rem;">
+                        <div class="chart-title">Age Distribution (Grouped)</div>
+                        <div class="chart-container">
+                            <canvas id="edaAgeChart"></canvas>
+                        </div>
+
+                        <div class="chart-title" style="margin-top: 1.5rem;">BMI Distribution (Categories)</div>
+                        <div class="chart-container">
+                            <canvas id="edaBmiChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Feature Importance -->
+                    <div id="featureChartContainer" class="hidden" style="margin-top: 1.5rem;">
+                        <div class="chart-title">Feature Importance (Logistic Regression)</div>
+                        <div class="chart-container">
+                            <canvas id="featureChart"></canvas>
+                        </div>
+                        <div class="feature-note">
+                            Blue bars tend to increase diabetes risk and green bars tend to be protective
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div>
+                <!-- Step 3: Prediction Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-icon">🔍</span>
+                        <div>
+                            <div class="card-title">Step 3: Check Your Risk</div>
+                            <div class="card-description">Enter your health information to predict diabetes risk</div>
+                        </div>
+                    </div>
+
+                    <form id="predictionForm" onsubmit="handlePredict(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" required>
+                                    <option value="Female">Female</option>
+                                    <option value="Male">Male</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="age">Age (years)</label>
+                                <input type="number" id="age" placeholder="Enter age" min="0" max="120" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="hypertension">Hypertension</label>
+                                <select id="hypertension" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="heartDisease">Heart Disease</label>
+                                <select id="heartDisease" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="smokingHistory">Smoking History</label>
+                            <select id="smokingHistory" required>
+                                <option value="Never">Never</option>
+                                <option value="No Info">No Info</option>
+                                <option value="Current">Current</option>
+                                <option value="Former">Former</option>
+                                <option value="Ever">Ever</option>
+                                <option value="Not Current">Not Current</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bmi">BMI</label>
+                                <input type="number" id="bmi" placeholder="Enter BMI" step="0.1" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="hba1c">HbA1c Level</label>
+                                <input type="number" id="hba1c" placeholder="Enter HbA1c" step="0.1" min="0" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bloodGlucose">Blood Glucose Level</label>
+                            <input type="number" id="bloodGlucose" placeholder="Enter blood glucose" step="0.1" min="0" required>
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="predictBtn" disabled>Predict Risk</button>
+                    </form>
+
+                    <!-- Prediction Result -->
+                    <div id="resultContainer" class="hidden">
+                        <div class="result-card">
+                            <div class="result-header">
+                                <div class="result-title">Prediction Result</div>
+                                <div class="result-badge" id="resultBadge"></div>
+                            </div>
+
+                            <div class="result-probability">
+                                Risk Probability: <span id="riskProbability">0%</span>
+                            </div>
+
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill" style="--progress-width: 0%;"></div>
+                            </div>
+
+                            <div class="result-message">
+                                ✓ Your predicted diabetes risk is <span id="riskLevel">low</span> based on this model. This does not replace medical tests.
+                            </div>
+
+                            <!-- Risk Factors -->
+                            <div id="riskFactorsContainer" class="risk-factors-block">
+                                <div class="risk-factors-title">
+                                    Risk Factors Analysis
+                                </div>
+                                <ul class="feature-list" id="riskFactorsList"></ul>
+                            </div>
+
+                            <!-- What-if scenarios -->
+                            <div id="whatIfContainer" class="whatif-block hidden">
+                                <div class="whatif-title">What-if scenarios (hypothetical improvements)</div>
+                                <ul class="whatif-list" id="whatIfList"></ul>
+                                <div class="whatif-note">
+                                    These scenarios show how your predicted risk might change if some key indicators improve. They are not medical advice.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end right column -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
